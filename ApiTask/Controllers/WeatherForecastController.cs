@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ApiTask.Models;
 using ApiTask.Security;
 using Microsoft.Extensions.Configuration;
 
@@ -19,12 +20,14 @@ namespace ApiTask.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IConfiguration _config;
+       // private readonly IConfiguration _config;
+        private readonly IJWTSecurity _jwt;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IConfiguration config)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IJWTSecurity jwt)
         {
             _logger = logger;
-            _config = config; 
+           // _config = config;
+            _jwt = jwt; 
         }
 
         [HttpGet]
@@ -41,10 +44,20 @@ namespace ApiTask.Controllers
         }
 
         [HttpGet("GetToken")]
-        public string GetToken()
+        public IActionResult  GetToken()
         {
-            var JwtGen = new JWTSecurity(_config);
-            return JwtGen.JWTGen();
+            var user = new AppUser
+            {
+                LastName = "Edun",
+                FirstName = "Olukunle",
+                Email = "favourblessing@gmail.com",
+                Role = "Decadev"
+
+            };
+            //var JwtGen = new JWTSecurity(_config);
+           // return JwtGen.JWTGen(); 
+           var token = _jwt.JWTGen(user);
+           return Ok(token);
         }
     }
 }

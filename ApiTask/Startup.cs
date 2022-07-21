@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ApiTask.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,6 +32,7 @@ namespace ApiTask
         {
             // IOC ==> Inversion of control
             services.AddControllers();
+            services.AddScoped<IJWTSecurity, JWTSecurity>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiTask", Version = "v1" });
@@ -52,7 +54,7 @@ namespace ApiTask
                         ValidateAudience = false,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("JWT:Key").Value)),
                         ValidateIssuerSigningKey = true,
-                };
+                    };
                 });
 
         }
