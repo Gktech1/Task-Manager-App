@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApiTask.Models;
 using ApiTask.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 
 namespace ApiTask.Controllers
@@ -31,6 +32,7 @@ namespace ApiTask.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
@@ -44,6 +46,7 @@ namespace ApiTask.Controllers
         }
 
         [HttpGet("GetToken")]
+        [Authorize]
         public IActionResult  GetToken()
         {
             var user = new AppUser
