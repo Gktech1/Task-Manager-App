@@ -12,8 +12,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ApiTask.ConfigExtensions;
+using ApiTask.Data;
+using ApiTask.Models;
 using ApiTask.Security;
+using ApiTask.Services;
+using ApiTask.Services.Interfaces;
+using ApiTask.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ApiTask
@@ -32,66 +41,27 @@ namespace ApiTask
         {
             // IOC ==> Inversion of control
             services.AddControllers();
-            services.AddScoped<IJWTSecurity, JWTSecurity>();
-            services.AddSwaggerGen(c =>
+            services.AddIdentity<AppUser, IdentityRole>(opt =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiTask", Version = "v1" });
+                opt.Password.RequiredUniqueChars = 0;
+                opt.Password.RequireNonAlphanumeric = false;
+            }).AddEntityFrameworkStores<APIContext>();
+            services.AddDbContext<APIContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IJWTSecurity, JWTSecurity>();
+            services.AddDbContext<APIContext>();
+            services.AddScoped<IUserServices, UserServices>();
+            services.AddAutoMapper(typeof(AutomapperProfile));
+             
+            ConfigSettings.ConfigureSwagger(services);
+            
+            ConfigSettings.ConfigureAuthentication(services, Configuration);
 
-                // Creating the security Authorize Key
-                // Creating the security definition
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-
-                {
-                    Description = "JWT bearer authorization",
-                    Name = "Authorization",
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey
-                });
-
-                // Creating the security requirement 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference()
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-
-                        }
-                    },
-                    new string[]{}
-
-                    }
-               });
+            //Global Authorization
+            services.AddAuthorization(config =>
+            {
+                config.AddPolicy("DecadevRole", policy => policy.RequireRole("Decadev"));
             });
-
-           
-            
-            
-            services.AddAuthentication(opt =>
-                {
-                    // change default scheme to JWT
-                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                //signature of the scheme & validate the descriptor 
-                .AddJwtBearer(opt =>
-                {
-
-                    opt.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("JWT:Key").Value)),
-                        ValidateIssuerSigningKey = true,
-                    };
-                });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -119,3 +89,4 @@ namespace ApiTask
         }
     }
 }
+ 

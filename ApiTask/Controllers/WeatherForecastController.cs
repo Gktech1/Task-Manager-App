@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace ApiTask.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize (Policy = "DecadevRole")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
@@ -64,3 +64,4 @@ namespace ApiTask.Controllers
         }
     }
 }
+*/

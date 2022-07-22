@@ -4,6 +4,6 @@ namespace ApiTask.Security
 {
     public interface IJWTSecurity
     {
-        public string JWTGen(AppUser user);
+        public string JWTGen(AppUser user); //string role
     }
 }
