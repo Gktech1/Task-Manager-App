@@ -44,14 +44,14 @@ namespace ApiTask.Controllers
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Invalid Model");
-                return BadRequest(userDto);
+                return BadRequest(ModelState);
             }
 
             //Check if user email already exists
             if (await _userServices.AlreadlyExistsAsync(userDto.Email))
             {
-                ModelState.AddModelError("", "Email already exists");
-                return BadRequest(userDto);
+               ModelState.AddModelError("rt", "Email already exists");
+                return BadRequest(ModelState["rt"]);
             }
 
 
@@ -69,10 +69,23 @@ namespace ApiTask.Controllers
                     ModelState.AddModelError(error.Code, error.Description);
                 }
 
-                return BadRequest(userDto);
+                return BadRequest(ModelState);
             }
 
-            return Ok(result.Message);
+            // add role to user
+            var roleResult = await _userServices.AddRoleAsync(user, userDto.Role);
+            if (!roleResult.Succeeded)
+            {
+                foreach (var error in result.Error.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+
+                return BadRequest(ModelState);
+            }
+
+             
+            return Ok($"Added Successfully! => Id: " + user.Id);
 
         }
         
@@ -81,7 +94,7 @@ namespace ApiTask.Controllers
         {
             if (string.IsNullOrWhiteSpace(Id))
                 return BadRequest("Null entry for Id");
-
+             
             var user = await _userServices.GetUserAsync(Id);
 
             if (user == null)

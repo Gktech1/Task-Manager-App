@@ -15,7 +15,12 @@ namespace ApiTask.DTOs
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
-        public string Email { get; set; }
+        public string Email{ get; set; }
+
+        [Required]
+        [StringLength(15, MinimumLength = 3, ErrorMessage = "3 to 15 characters allowed")]
+
+        public string Role { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

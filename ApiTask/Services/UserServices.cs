@@ -58,21 +58,26 @@ namespace ApiTask.Services
 
         }
 
-        
-        public class ServiceReturnType<T>
+        public async Task<bool> AlreadlyExistsAsync(string email)
         {
+            var result = await _userManager.FindByEmailAsync(email);
+            if (result == null)
+                return false;
+            return true;
+        }
+
+        public async Task<IdentityResult> AddRoleAsync(AppUser user, string  roleName)
+        {
+            return await _userManager.AddToRoleAsync(user, roleName);
+        }
+    }
+
+    public class ServiceReturnType<T>
+    {
             public bool Status { get; set; }
             public string Message { get; set; }
             public T Data { get; set; }
             public  T Error { get; set; }   
-        }
-        
-        public async Task<bool> AlreadlyExistsAsync(string email)
-        {
-            var result = await _userManager.FindByEmailAsync(email);
-            if(result == null)
-                return false;
-            return true;
-        }
     }
+
 }

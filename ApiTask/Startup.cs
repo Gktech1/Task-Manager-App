@@ -18,6 +18,7 @@ using ApiTask.Models;
 using ApiTask.Security;
 using ApiTask.Services;
 using ApiTask.Services.Interfaces;
+using ApiTask.Services.Interfaces.TaskEntity;
 using ApiTask.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -45,6 +46,7 @@ namespace ApiTask
             {
                 opt.Password.RequiredUniqueChars = 0;
                 opt.Password.RequireNonAlphanumeric = false;
+                opt.User.RequireUniqueEmail = true; 
             }).AddEntityFrameworkStores<APIContext>();
             services.AddDbContext<APIContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -52,6 +54,8 @@ namespace ApiTask
             services.AddDbContext<APIContext>();
             services.AddScoped<IUserServices, UserServices>();
             services.AddAutoMapper(typeof(AutomapperProfile));
+            services.AddScoped<ITaskRepository, TaskRepository>();
+            services.AddScoped<ITaskServices, TaskServices>();
              
             ConfigSettings.ConfigureSwagger(services);
             
