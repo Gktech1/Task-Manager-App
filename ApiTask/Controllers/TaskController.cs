@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ApiTask.DTOs;
 using ApiTask.Services.Interfaces;
 using AutoMapper;
@@ -17,10 +18,11 @@ namespace ApiTask.Controllers
             _mapper = mapper;
             
         }
-        [HttpGet("get-tasks")]
+        [HttpGet("get-tasks/{Id}")]
         public IActionResult Get(string id)
         {
-            return Ok();
+          var result =  _taskServices.GetTaskById(id);
+            return Ok(result);
         }
 
         [HttpGet("get-all-tasks")]

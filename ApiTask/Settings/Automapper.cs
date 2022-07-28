@@ -10,7 +10,7 @@ namespace ApiTask.Settings
         public AutomapperProfile()
         {
             CreateMap<AppUserToAddDto, AppUser>()
-                .ForMember(Des => Des.UserName, option => option.MapFrom(src => src.Email));
+               .ForMember(Des => Des.UserName, option => option.MapFrom(src => src.Email));
             CreateMap<AppUser, UserDetailsToReturnDto>();
             CreateMap<Task, TaskToReturnDto>();
         }

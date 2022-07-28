@@ -58,7 +58,8 @@ namespace ApiTask.Controllers
             //map dto to user model
             var user = _mapper.Map<AppUser>(userDto);
             //manual mapping
-          //  user.UserName = userDto.Email;
+           // user.UserName = user.Email;
+
 
             // Create User
             var result = await _userServices.AddUserAsync(user, userDto.Password);
@@ -73,7 +74,7 @@ namespace ApiTask.Controllers
             }
 
             // add role to user
-            var roleResult = await _userServices.AddRoleAsync(user, userDto.Role);
+            var roleResult = await _userServices.AddRoleAsync(user, userDto.Role.ToLower());
             if (!roleResult.Succeeded)
             {
                 foreach (var error in result.Error.Errors)
