@@ -23,7 +23,7 @@ namespace ApiTask.Services
         {
             this.Tasks = _taskRepo.GetAllTasksAsync();
         }
-        public  System.Threading.Tasks.Task<List<Task>> PaginatedResult(int size, int page)
+        public  Task<List<Task>> PaginatedResult(int size, int page)
         {
           return System.Threading.Tasks.Task.Run(() => this.Tasks.Skip(page - 1 * size).Take(size).ToListAsync());
         }
@@ -38,9 +38,9 @@ namespace ApiTask.Services
         }
 
         public async Task<Task> GetTaskById(string id)
-        {
-           // return  _taskRepo.GetTaskByIdAsync(id);
-           return await Tasks.FirstOrDefaultAsync(x => x.Id == id);
+        { 
+            return await _taskRepo.GetTaskByIdAsync(id); 
+            //return await Tasks.FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ApiTask.DTOs;
 using ApiTask.Services.Interfaces;
@@ -18,12 +19,34 @@ namespace ApiTask.Controllers
             _mapper = mapper;
             
         }
-        [HttpGet("get-tasks/{Id}")]
-        public IActionResult Get(string id)
+
+        [HttpPost("add")]
+        public async Task<IActionResult> Post(AddNewTaskDto newTask)
         {
-          var result =  _taskServices.GetTaskById(id);
-            return Ok(result);
+            if (!ModelState.IsValid) 
+                return BadRequest(ModelState);
+
+            //Map to Task Shape 
+            var taskToAdd = _mapper.Map<Models.Task>(newTask);
+
+            //add to database
+            var result = await _taskServices.AddTask(taskToAdd);
+            if (result == null)
+                return BadRequest("Failed to add task!");
+            return CreatedAtRoute("Get" ,new {Id = taskToAdd.Id} ,taskToAdd);
+            // return Ok($"New task added Id: {result}");
         }
+ 
+        [HttpGet("get-tasks/{Id}")]
+        public async Task<IActionResult> Get(string Id)
+        {
+            var result = await _taskServices.GetTaskById(Id);
+            if (result == null)
+                return BadRequest("The Data is Not Found!");
+
+            var taskReturnDto = _mapper.Map<TaskToReturnDto>(result);
+            return Ok(taskReturnDto);
+        } 
 
         [HttpGet("get-all-tasks")]
         public async Task<IActionResult> GetList(int size, int page)
@@ -39,7 +62,7 @@ namespace ApiTask.Controllers
 
             // map result from Task to TaskToReturnDto
 
-            var taskToReturnDto = _mapper.Map<TaskToReturnDto>(result);
+            var taskToReturnDto = _mapper.Map<List<TaskToReturnDto>>(result);
             
             return Ok(taskToReturnDto);
         }

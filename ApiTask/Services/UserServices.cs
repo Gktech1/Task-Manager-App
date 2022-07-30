@@ -17,9 +17,9 @@ namespace ApiTask.Services
         }
 
 
-        public Task<AppUser> GetUserAsync(string id)
+        public async Task<AppUser> GetUserAsync(string id)
         {
-            return _userManager.FindByIdAsync(id);
+            return await _userManager.FindByIdAsync(id);
         }
 
 

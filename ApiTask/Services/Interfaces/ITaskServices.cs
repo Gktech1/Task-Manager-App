@@ -11,5 +11,6 @@ namespace ApiTask.Services.Interfaces
         Task<List<Task>> PaginatedResult(int size, int page);
         Task<string> AddTask(Task entity);
         Task<Task> GetTaskById(string id);
+        
     }
 }

@@ -13,6 +13,8 @@ namespace ApiTask.Settings
                .ForMember(Des => Des.UserName, option => option.MapFrom(src => src.Email));
             CreateMap<AppUser, UserDetailsToReturnDto>();
             CreateMap<Task, TaskToReturnDto>();
+            CreateMap<AddNewTaskDto, Task>();
         }
     }
 }
+ 

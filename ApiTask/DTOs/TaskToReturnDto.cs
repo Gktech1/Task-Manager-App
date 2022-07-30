@@ -1,8 +1,10 @@
-﻿namespace ApiTask.DTOs
+﻿using System;
+
+namespace ApiTask.DTOs
 {
     public class TaskToReturnDto
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid .NewGuid().ToString();
         public string Text { get; set; }
     }
 }
